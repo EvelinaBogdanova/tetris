@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { randomTetromino } from '../components/Tetrominoes';
+import { randomTetromino, TetrominoShape } from '../components/Tetrominoes';
 import { STAGE_WIDTH, checkCollision } from '@/utils/gameHelpers';
 
 export interface PlayerState {
@@ -11,7 +11,7 @@ export interface PlayerState {
 const rotateMatrix = (matrix: TetrominoShape): TetrominoShape => {
     const rows = matrix.length;
     const cols = matrix[0].length;
-    const rotated: Array.from({ length: cols }, () => new Array(rows).fill(0));
+    const rotated = Array.from({ length: cols }, () => new Array(rows).fill(0));
 
     for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
@@ -28,25 +28,27 @@ export const usePlayer = () => {
         collided: false,
     }));
 
-    const updatePlayerPos = useCallback(({ x, y, collided, stage }: { x: number; y: number; collided: boolean, stage?: any[][] }) =>
-         setPlayer(prev => ({
-            if (stage && (x !== 0 || y !== 0)) {
-                const futurePos = {
-                    ...prev,
-                    pos: {x: prev.pos.x + x, y: prev.pos.y + y},
-                };
-                const willCollide = checkCollision(futurePos, stage, { x: 0, y: 0 });
-                if (willCollide && !collided) {
-                    return prev;
+    const updatePlayerPos = useCallback(
+        ({ x, y, collided, stage }: { x: number; y: number; collided: boolean; stage?: any[][] }) =>
+            setPlayer(prev => {
+                if (stage && (x !== 0 || y !== 0)) {
+                    const futurePos = {
+                        ...prev,
+                        pos: { x: prev.pos.x + x, y: prev.pos.y + y },
+                    };
+                    const willCollide = checkCollision(futurePos, stage, { x: 0, y: 0 });
+                    if (willCollide && !collided) {
+                        return prev;
+                    }
                 }
-            }
-            return {
-                ...prev,
-                pos: { x: prev.pos.x + x, y: prev.pos.y + y },
-                collided,
-            };
-        })
-    ), []);
+                return {
+                    ...prev,
+                    pos: { x: prev.pos.x + x, y: prev.pos.y + y },
+                    collided,
+                };
+            }),
+        []
+    );
 
     const resetPlayer = useCallback(() => {
         setPlayer({
@@ -58,11 +60,10 @@ export const usePlayer = () => {
 
     const playerRotate = useCallback((stage: any[][]) => {
         setPlayer(prev => {
-            const rotated = rotateMatrix(prev.tetromino);
-            const clonedPlayer = { 
+            const clonedPlayer: PlayerState = {
                 ...prev,
-                tetromino: rotated,
-                pos: { ...prev.pos }
+                tetromino: rotateMatrix(prev.tetromino),
+                pos: { ...prev.pos },
             };
 
             let offset = 1;
@@ -70,7 +71,7 @@ export const usePlayer = () => {
                 clonedPlayer.pos.x += offset;
                 offset = -(offset + (offset > 0 ? 1 : -1));
                 if (offset > clonedPlayer.tetromino[0].length) {
-                    return prev;
+                    return prev; // повернуть не удалось, оставляем как было
                 }
             }
 

@@ -8,12 +8,12 @@ export function useInterval(callback: () => void, delay: number | null) {
     }, [callback]);
 
     useEffect(() => {
+        function tick() {
+            if (savedCallback.current) savedCallback.current();
+        }
         if (delay !== null) {
-            const interval = setInterval(() => {
-                savedCallback.current();
-            }, delay);
-
-            return () => clearInterval(interval);
+            const id = setInterval(tick, delay);
+            return () => clearInterval(id);
         }
     }, [delay]);
 }

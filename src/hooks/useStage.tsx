@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { createStage } from '@/utils/gameHelpers';
+import { createStage } from '@/utils/GameHelpers';
+import { useEffect, useState } from 'react';
 import { PlayerState } from './usePlayer';
 
 type Cell = [number | string, string];

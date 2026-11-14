@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { checkCollision, STAGE_WIDTH } from '@/utils/GameHelpers';
+import { useCallback, useState } from 'react';
 import { randomTetromino, TetrominoShape } from '../components/Tetrominoes';
-import { STAGE_WIDTH, checkCollision } from '@/utils/gameHelpers';
 
 export interface PlayerState {
     pos: { x: number; y: number };

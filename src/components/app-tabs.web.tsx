@@ -7,6 +7,7 @@ import {
   TabListProps,
 } from 'expo-router/ui';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { type ComponentProps, type ReactNode } from 'react';
 import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
@@ -33,7 +34,10 @@ export default function AppTabs() {
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+type TabButtonProps = Omit<ComponentProps<typeof Pressable>, 'children'> &
+  Pick<TabTriggerSlotProps, 'isFocused' | 'href'> & { children?: ReactNode };
+
+export function TabButton({ children, isFocused, href: _href, ...props }: TabButtonProps) {
   return (
     <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
       <ThemedView

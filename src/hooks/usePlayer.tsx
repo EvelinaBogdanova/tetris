@@ -1,4 +1,4 @@
-import { checkCollision, STAGE_WIDTH } from '@/utils/GameHelpers';
+import { checkCollision, STAGE_WIDTH, type Stage } from '@/utils/GameHelpers';
 import { useCallback, useState } from 'react';
 import { randomTetromino, TetrominoShape } from '../components/Tetrominoes';
 
@@ -29,7 +29,7 @@ export const usePlayer = () => {
     }));
 
     const updatePlayerPos = useCallback(
-        ({ x, y, collided, stage }: { x: number; y: number; collided: boolean; stage?: any[][] }) =>
+        ({ x, y, collided, stage }: { x: number; y: number; collided: boolean; stage?: Stage }) =>
             setPlayer(prev => {
                 if (stage && (x !== 0 || y !== 0)) {
                     const futurePos = {
@@ -58,7 +58,7 @@ export const usePlayer = () => {
         });
     }, []);
 
-    const playerRotate = useCallback((stage: any[][]) => {
+    const playerRotate = useCallback((stage: Stage) => {
         setPlayer(prev => {
             const clonedPlayer: PlayerState = {
                 ...prev,

@@ -10,14 +10,26 @@ export default function Game() {
   const [dropTime, setDropTime] = useState<number | null>(null);
   const [gameOver, setGameOver] = useState(false);
   const { player, updatePlayerPos, resetPlayer, playerRotate } = usePlayer();
-  const [stage, setStage] = useStage(player, resetPlayer);
+  const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
   const playerRef = useRef(player);
   const stageRef = useRef(stage);
   const isMoving = useRef(false);
   const isResetting = useRef(false);
+  const processedRowsRef = useRef(rowsCleared);
+  const [score, setScore] = useState(0);
+  const [lines, setLines] = useState(0);
 
   useEffect(() => { playerRef.current = player; }, [player]);
   useEffect(() => { stageRef.current = stage; }, [stage]);
+
+  useEffect(() => {
+    const newlyCleared = rowsCleared - processedRowsRef.current;
+    if (newlyCleared > 0) {
+      setLines(prev => prev + newlyCleared);
+      setScore(prev => prev + newlyCleared * 100);
+    }
+    processedRowsRef.current = rowsCleared;
+  }, [rowsCleared]);
 
   useEffect(() => {
     setDropTime(1000);
@@ -31,7 +43,6 @@ export default function Game() {
 
   const drop = useCallback(() => {
     if (gameOver || isResetting.current || playerRef.current.collided) return;
-
     const willCollideY = checkCollision(playerRef.current, stageRef.current, { x: 0, y: 1 });
 
     if (!willCollideY) {
@@ -44,6 +55,7 @@ export default function Game() {
       }
       
       isResetting.current = true;
+      setScore(prev => prev + 15);
       updatePlayerPos({ x: 0, y: 0, collided: true, stage: stageRef.current });
       
       setTimeout(() => {
@@ -62,6 +74,7 @@ export default function Game() {
 
     if (dragY > 0) {
       isResetting.current = true;
+      setScore(prev => prev + 15 + dragY * 2);
       updatePlayerPos({ x: 0, y: dragY, collided: true, stage: stageRef.current });
       
       setTimeout(() => {
@@ -117,6 +130,7 @@ export default function Game() {
         <View style={styles.header}>
           <Text style={styles.title}>TETRIS</Text>
           <Text style={styles.neonText}>NEON EDITION</Text>
+          <Text style={styles.stats}>SCORE {score}  ·  LINES {lines}</Text>
         </View>
         
         <View style={styles.boardWrapper}>
@@ -129,6 +143,9 @@ export default function Game() {
               <Text style={styles.gameOverText}>GAME OVER</Text>
               <Text style={styles.restartText} onPress={() => {
                 setStage(createStage());
+                processedRowsRef.current = rowsCleared;
+                setScore(0);
+                setLines(0);
                 setGameOver(false);
                 setDropTime(1000);
                 resetPlayer();
@@ -172,6 +189,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     letterSpacing: 2, 
     marginTop: -5 
+  },
+  stats: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 8,
+    letterSpacing: 1,
   },
   boardWrapper: {
     padding: 4,

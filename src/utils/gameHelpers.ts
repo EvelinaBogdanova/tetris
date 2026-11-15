@@ -21,6 +21,6 @@ export function checkCollision(
     const targetX = x + player.pos.x + offset.x;
     const targetY = y + player.pos.y + offset.y;
     return targetX < 0 || targetX >= STAGE_WIDTH || targetY >= STAGE_HEIGHT ||
-      (targetY >= 0 && stage[targetY]?.[targetX]?.[0] !== 0);
+      (targetY >= 0 && stage[targetY]?.[targetX]?.[1] === 'merged');
   }));
 }

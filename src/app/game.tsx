@@ -124,14 +124,16 @@ export default function Game() {
         </View>
 
         {gameOver && (
-          <View style={styles.gameOver}>
-            <Text style={styles.gameOverText}>GAME OVER</Text>
-            <Text style={styles.restartText} onPress={() => {
-              setStage(createStage());
-              setGameOver(false);
-              setDropTime(1000);
-              resetPlayer();
-            }}>Toque para reiniciar</Text>
+          <View style={styles.gameOverOverlay}>
+            <View style={styles.gameOver}>
+              <Text style={styles.gameOverText}>GAME OVER</Text>
+              <Text style={styles.restartText} onPress={() => {
+                setStage(createStage());
+                setGameOver(false);
+                setDropTime(1000);
+                resetPlayer();
+              }}>Toque para reiniciar</Text>
+            </View>
           </View>
         )}
 
@@ -183,12 +185,22 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 10,
   },
-  gameOver: {
+  gameOverOverlay: {
     position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.9)',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.65)',
+    zIndex: 20,
+    elevation: 20,
+  },
+  gameOver: {
+    backgroundColor: 'rgba(0,0,0,0.95)',
     padding: 30,
     borderRadius: 15,
-    zIndex: 10,
     borderWidth: 2,
     borderColor: '#ff4444',
     alignItems: 'center',

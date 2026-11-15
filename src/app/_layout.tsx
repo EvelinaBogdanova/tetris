@@ -1,11 +1,5 @@
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { Stack } from 'expo-router';
 
-export default function TabLayout() {
-  return (
-    <>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </>
-  );
+export default function RootLayout() {
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
